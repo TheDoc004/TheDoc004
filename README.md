@@ -62,5 +62,4 @@ I'm half business, half engineering: I care about *why* a thing should exist, an
 
 ### 📫 come say hi
 
-<!-- TODO(diego): drop in your real links. Use a dedicated email, not your personal one. -->
-[LinkedIn](https://www.linkedin.com/in/YOUR-HANDLE) · [email](mailto:YOUR-DEDICATED-EMAIL) · or find me at the next San Diego hackathon, I'll be the one with the protein froyo.
+[email](mailto:diegoram1227mater@gmail.com) · or find me at the next San Diego hackathon, I'll be the one with the protein froyo.
