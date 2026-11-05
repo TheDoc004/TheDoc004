@@ -56,7 +56,8 @@ I'm half business, half engineering: I care about *why* a thing should exist, an
 ### 🐤 fun facts
 - This card regenerates itself every night with a GitHub Action. I automated my own README.
 - I play chess, lift, and lose at Brawlhalla.
-- The duck up top is for rubber-duck debugging. It has solved more bugs than any of my LLMs. Don't tell them.
+- The ASCII guy up top is me, rendered from a car selfie by a Python script. The hair took the most characters.
+- Before the portrait, a rubber duck sat there. It's still in the script as a fallback. It has solved more bugs than any of my LLMs. Don't tell them.
 
 ---
 

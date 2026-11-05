@@ -5,7 +5,7 @@ on:
     - cron: "17 8 * * *" # daily, while I'm asleep (allegedly)
   workflow_dispatch:
   push:
-    paths: ["scripts/**", "assets/me.jpg"]
+    paths: ["scripts/**", "assets/portrait.txt"]
 
 permissions:
   contents: write
@@ -18,7 +18,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install pillow
       - run: python scripts/neofetch.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

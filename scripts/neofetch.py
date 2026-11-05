@@ -2,13 +2,16 @@
 
 Writes assets/neofetch-dark.svg and assets/neofetch-light.svg. With a GITHUB_TOKEN (or GH_TOKEN)
 in the environment it pulls live stats from the GitHub API; without one it uses the fallbacks below.
-If assets/me.jpg exists and Pillow is installed, the duck is swapped for an ASCII portrait of you.
+If assets/portrait.txt exists, it replaces the duck. Make one from a photo (needs Pillow; the photo
+itself never goes in the repo):
 
     python3 scripts/neofetch.py
+    python3 scripts/neofetch.py ~/me.jpg 200,600,700,1300   # optional crop: left,top,right,bottom
 """
 
 import json
 import os
+import sys
 import urllib.request
 from datetime import date
 from pathlib import Path
@@ -106,20 +109,34 @@ def fetch_stats():
     }
 
 
-def portrait(path, cols=38, rows=20):
-    """ASCII portrait from a photo; None if there's no photo or no Pillow."""
-    try:
-        from PIL import Image, ImageOps
-    except ImportError:
-        return None
-    if not path.exists():
-        return None
+def portrait_from_photo(path, crop=None, cols=76, rows=52):
+    """Turns a photo into ASCII art lines (needs Pillow). crop is (left, top, right, bottom).
+    Dark pixels get dense characters: a positive on the light card, a glowing negative on the dark
+    one, and dark hair carries the silhouette either way. The edges fade out in an oval so the
+    background doesn't fight the face."""
+    from PIL import Image, ImageOps
+
+    img = Image.open(path)
+    if crop:
+        img = img.crop(crop)
+    img = ImageOps.equalize(ImageOps.grayscale(img).resize((cols, rows)))
+    px = list(img.get_flattened_data())
     ramp = " .:-=+*#%@"
-    img = ImageOps.grayscale(Image.open(path)).resize((cols, rows))
-    img = ImageOps.autocontrast(img)
-    px = list(img.getdata())
-    return ["".join(ramp[(255 - px[r * cols + c]) * (len(ramp) - 1) // 255] for c in range(cols))
-            for r in range(rows)]
+    out = []
+    for r in range(rows):
+        row = ""
+        for c in range(cols):
+            d = ((c - cols / 2) / (cols / 2)) ** 2 + ((r - rows / 2) / (rows / 2)) ** 2
+            v = int((255 - px[r * cols + c]) * max(0.0, min(1.0, (1.08 - d) / 0.3)))  # oval fade
+            row += ramp[v * (len(ramp) - 1) // 255]
+        out.append(row.rstrip())
+    return out
+
+
+def portrait():
+    """The saved ASCII portrait (assets/portrait.txt), or None to fall back to the duck."""
+    path = ASSETS / "portrait.txt"
+    return path.read_text().rstrip("\n").split("\n") if path.exists() else None
 
 
 THEMES = {
@@ -133,8 +150,11 @@ THEMES = {
 def svg(theme, art, lines):
     t = THEMES[theme]
     lh, top, art_x, info_x = 20, 52, 20, 410
-    height = top + max(len(art), len(lines)) * lh + 20
-    art_top = top + (len(lines) - len(art)) * lh // 2
+    height = top + len(lines) * lh
+    # a big portrait shrinks to the height of the info column; the duck stays at full size
+    art_lh = min(lh, (len(lines) * lh) / len(art))
+    art_font = f' font-size="{art_lh * 0.8:.1f}px"' if art_lh < lh else ""
+    art_top = top - 14 + (len(lines) * lh - len(art) * art_lh) / 2 + art_lh * 0.75
 
     out = [
         f'<svg xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace,SFMono-Regular,Consolas,'
@@ -149,10 +169,10 @@ def svg(theme, art, lines):
         '<circle cx="60" cy="15" r="6" fill="#28c840"/>',
         f'<text x="492" y="20" text-anchor="middle" fill="{t["dots"]}" font-size="13px">'
         f"diego@thedoc004: ~ — neofetch</text>",
-        f'<text x="{art_x}" y="{art_top}" class="art">',
+        f'<text x="{art_x}" y="{art_top:.1f}" class="art"{art_font}>',
     ]
     for i, row in enumerate(art):
-        out.append(f'<tspan x="{art_x}" y="{art_top + i * lh}">{escape(row)}</tspan>')
+        out.append(f'<tspan x="{art_x}" y="{art_top + i * art_lh:.1f}">{escape(row)}</tspan>')
     out.append("</text>")
 
     out.append(f'<text x="{info_x}" y="{top}" fill="{t["text"]}">')
@@ -179,8 +199,11 @@ def svg(theme, art, lines):
 
 
 def main():
+    if len(sys.argv) > 1:  # neofetch.py photo.jpg [left,top,right,bottom]: save a new portrait
+        crop = tuple(int(n) for n in sys.argv[2].split(",")) if len(sys.argv) > 2 else None
+        (ASSETS / "portrait.txt").write_text("\n".join(portrait_from_photo(sys.argv[1], crop)) + "\n")
     stats = fetch_stats()
-    art = portrait(ASSETS / "me.jpg") or DUCK
+    art = portrait() or DUCK
     lines = info_lines(stats)
     ASSETS.mkdir(exist_ok=True)
     for theme in THEMES:
