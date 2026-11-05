@@ -1,0 +1,31 @@
+name: refresh neofetch card
+
+on:
+  schedule:
+    - cron: "17 8 * * *" # daily, while I'm asleep (allegedly)
+  workflow_dispatch:
+  push:
+    paths: ["scripts/**", "assets/me.jpg"]
+
+permissions:
+  contents: write
+
+jobs:
+  draw:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pillow
+      - run: python scripts/neofetch.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: commit if the card changed
+        run: |
+          git config user.name "neofetch-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/*.svg
+          git diff --cached --quiet || git commit -m "chore: refresh neofetch card"
+          git push
