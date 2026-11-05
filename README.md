@@ -63,4 +63,4 @@ I'm half business, half engineering: I care about *why* a thing should exist, an
 
 ### 📫 come say hi
 
-[email](mailto:diegoram1227mater@gmail.com) · or find me at the next San Diego hackathon, I'll be the one with the protein froyo.
+[LinkedIn](https://www.linkedin.com/in/diegoramirez004) · [email](mailto:diegoram1227mater@gmail.com) · or find me at the next San Diego hackathon, I'll be the one with the protein froyo.
