@@ -46,7 +46,7 @@ I'm half business, half engineering: I care about *why* a thing should exist, an
 
 ```diff
 + added: voice agents (hackathon pending, results may vary)
-+ added: a nutrition app, because counting macros by hand is for people with free time
++ added: a nutrition app, because counting macros by hand is for BUUUMMMMMSS
 + improved: agents now ask before doing anything with real money (ask me how I learned)
 - removed: doing things manually
 ! known issue: will turn any problem into a multi-agent system
@@ -54,10 +54,9 @@ I'm half business, half engineering: I care about *why* a thing should exist, an
 ```
 
 ### 🐤 fun facts
-- This card regenerates itself every night with a GitHub Action. I automated my own README.
-- I play chess, lift, and lose at Brawlhalla.
-- The ASCII guy up top is me, rendered from a car selfie by a Python script. The hair took the most characters.
-- Before the portrait, a rubber duck sat there. It's still in the script as a fallback. It has solved more bugs than any of my LLMs. Don't tell them.
+- Im originally from Puerto Rico so spanish is actually my first language
+- I play chess, volleyball, lift, and lose at Brawlhalla.
+- Currently working as a chess coach and as a cofounder of lumidian
 
 ---
 
